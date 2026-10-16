@@ -1,0 +1,31 @@
+﻿{
+  "name": "nageswarreddy-plants-server",
+  "version": "1.0.0",
+  "description": "Production-ready backend for Nageswarreddy Nursery Plants MERN website",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "seed": "node src/seeds/seedData.js",
+    "gen-vapid": "node -e \"const wp=require('web-push'); const v=wp.generateVAPIDKeys(); console.log('VAPID_PUBLIC_KEY='+v.publicKey); console.log('VAPID_PRIVATE_KEY='+v.privateKey);\""
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "qrcode": "^1.5.4",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

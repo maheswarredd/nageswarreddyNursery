@@ -1,0 +1,25 @@
+const rateLimit = require('express-rate-limit');
+
+// General API Rate Limiter
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 300, // limit each IP to 300 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many requests from this IP, please try again after 15 minutes.'
+  }
+});
+
+// Stricter Auth Rate Limiter (login/register)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30, // 30 attempts per 15 minutes
+  message: {
+    success: false,
+    message: 'Too many login/registration attempts. Please try again after 15 minutes.'
+  }
+});
+
+module.exports = { apiLimiter, authLimiter };
