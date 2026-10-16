@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1f2937;
+    background-color: #fbfdf9;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-heading {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+}
+
+/* Custom nursery scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f0;
+}
+::-webkit-scrollbar-thumb {
+  background: #86efac;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #16a34a;
+}
+
+/* Smooth glass effect */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(220, 252, 231, 0.8);
+}
+
+.botanical-pattern {
+  background-color: #f0fdf4;
+  background-image: radial-gradient(#86efac 0.75px, transparent 0.75px), radial-gradient(#86efac 0.75px, #f0fdf4 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+}
