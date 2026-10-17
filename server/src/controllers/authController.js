@@ -26,16 +26,13 @@ const register = async (req, res, next) => {
     }
 
     // Role check: If email matches ADMIN_EMAIL from env, grant admin role
-    const isAdmin = process.env.ADMIN_EMAIL && email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase();
-
-    const user = await User.create({
-      name,
-      email: email.toLowerCase(),
-      password,
-      phone: phone || '',
-      role: isAdmin ? 'admin' : 'customer'
-    });
-
+   const user = await User.create({
+  name,
+  email: email.toLowerCase(),
+  password,
+  phone: phone || '',
+  role: 'customer'
+});
     const token = generateToken(user);
 
     // Send Welcome Email
@@ -68,48 +65,75 @@ const register = async (req, res, next) => {
 };
 
 // Customer / Admin Login
+// Customer / Admin Login
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const email = String(req.body.email || '').trim().toLowerCase();
+    const password = String(req.body.password || '');
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Please enter both email and password.' });
+      return res.status(400).json({
+        success: false,
+        message: 'Please enter both email and password.'
+      });
     }
 
-    // Check if matching admin credentials directly from environment variables
-    const isEnvAdminEmail = process.env.ADMIN_EMAIL && email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase();
-    const isEnvAdminPass = process.env.ADMIN_PASSWORD && password === process.env.ADMIN_PASSWORD;
+    const adminEmail = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+    const adminPassword = String(process.env.ADMIN_PASSWORD || '');
 
-    let user = await User.findOne({ email: email.toLowerCase() });
+    /*
+     * ADMIN LOGIN
+     * Admin credentials come ONLY from server .env.
+     * Nothing is hardcoded in the client.
+     */
+    const isEnvAdmin =
+      adminEmail &&
+      adminPassword &&
+      email === adminEmail &&
+      password === adminPassword;
 
-    if (isEnvAdminEmail && isEnvAdminPass) {
-      // Ensure admin user exists in DB
+    let user = await User.findOne({ email });
+
+    if (isEnvAdmin) {
+      // Create the server-controlled admin account if it does not exist.
       if (!user) {
         user = await User.create({
           name: 'Nageswarreddy Admin',
-          email: process.env.ADMIN_EMAIL.toLowerCase(),
-          password: process.env.ADMIN_PASSWORD,
-          role: 'admin',
-          phone: '+91 94901 23456'
+          email: adminEmail,
+          password: adminPassword,
+          role: 'admin'
         });
-      } else if (user.role !== 'admin') {
-        user.role = 'admin';
-        await user.save();
+      } else {
+        // Always enforce admin role for the exact .env admin credentials.
+        if (user.role !== 'admin') {
+          user.role = 'admin';
+          await user.save();
+        }
       }
     } else {
+      /*
+       * CUSTOMER LOGIN
+       */
       if (!user) {
-        return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid email or password.'
+        });
       }
 
       const isMatch = await user.comparePassword(password);
+
       if (!isMatch) {
-        return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid email or password.'
+        });
       }
     }
 
     const token = generateToken(user);
 
-    res.json({
+    return res.json({
       success: true,
       token,
       user: {
@@ -125,7 +149,6 @@ const login = async (req, res, next) => {
     next(error);
   }
 };
-
 // Get Current User Profile
 const getProfile = async (req, res, next) => {
   try {
