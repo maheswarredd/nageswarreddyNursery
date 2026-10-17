@@ -912,9 +912,12 @@ const seedDatabase = async () => {
     console.log('[Seed] Connected to MongoDB.');
 
     // 1. Seed or Update Admin User
-    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@nageswarreddyplants.com').toLowerCase();
-    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@Nageswar123!';
+   const adminEmail = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+const adminPassword = String(process.env.ADMIN_PASSWORD || '');
 
+if (!adminEmail || !adminPassword) {
+  throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be configured in server .env');
+}
     let admin = await User.findOne({ email: adminEmail });
     if (!admin) {
       admin = await User.create({
