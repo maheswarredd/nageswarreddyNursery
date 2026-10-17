@@ -26,13 +26,21 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
-    const { token: newToken, user: loggedUser } = res.data;
-    localStorage.setItem('nnp_token', newToken);
-    setToken(newToken);
-    setUser(loggedUser);
-    return loggedUser;
-  };
+  const res = await api.post('/auth/login', { email, password });
+
+  const newToken = res.data?.token;
+  const loggedUser = res.data?.user;
+
+  if (!newToken || !loggedUser) {
+    throw new Error(res.data?.message || 'Invalid login response from server.');
+  }
+
+  localStorage.setItem('nnp_token', newToken);
+  setToken(newToken);
+  setUser(loggedUser);
+
+  return loggedUser;
+};
 
   const register = async (userData) => {
     const res = await api.post('/auth/register', userData);
