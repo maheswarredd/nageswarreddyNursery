@@ -21,7 +21,7 @@ const Login = () => {
     try {
       setLoading(true);
       const user = await login(email, password);
-      if (user.role === 'admin' && redirectPath === '/') {
+      if (user?.role === 'admin' && redirectPath === '/') {
         navigate('/admin');
       } else {
         navigate(redirectPath);
