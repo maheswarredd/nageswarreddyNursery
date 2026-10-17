@@ -21,11 +21,12 @@ const Login = () => {
     try {
       setLoading(true);
       const user = await login(email, password);
-      if (user?.role === 'admin' && redirectPath === '/') {
-        navigate('/admin');
-      } else {
-        navigate(redirectPath);
-      }
+
+       if (user?.role === 'admin') {
+       navigate('/admin', { replace: true });
+       } else {
+       navigate(redirectPath || '/', { replace: true });
+       }
     } catch (err) {
       setError(err.message || 'Invalid email or password.');
     } finally {
