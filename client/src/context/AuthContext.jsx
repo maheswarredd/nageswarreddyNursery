@@ -27,13 +27,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
   const res = await api.post('/auth/login', { email, password });
-
-  const newToken = res.data?.token;
-  const loggedUser = res.data?.user;
-
-  if (!newToken || !loggedUser) {
-    throw new Error(res.data?.message || 'Invalid login response from server.');
-  }
+  const { token: newToken, user: loggedUser } = res.data;
 
   localStorage.setItem('nnp_token', newToken);
   setToken(newToken);
@@ -41,7 +35,6 @@ export const AuthProvider = ({ children }) => {
 
   return loggedUser;
 };
-
   const register = async (userData) => {
     const res = await api.post('/auth/register', userData);
     const { token: newToken, user: newUser } = res.data;
