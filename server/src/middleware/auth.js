@@ -38,10 +38,11 @@ const verifyAdmin = (req, res, next) => {
     return res.status(401).json({ success: false, message: 'Authentication required.' });
   }
 
-  const isAdminEmail = req.user.email?.toLowerCase() === (process.env.ADMIN_EMAIL || '').toLowerCase();
-  const hasAdminRole = req.user.role === 'admin';
+  const adminEmail = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+const isAdminEmail = req.user.email?.toLowerCase() === adminEmail;
+const hasAdminRole = req.user.role === 'admin';
 
-  if (!isAdminEmail && !hasAdminRole) {
+if (!isAdminEmail || !hasAdminRole) {
     return res.status(403).json({ success: false, message: 'Access denied. Administrator privileges required.' });
   }
 
